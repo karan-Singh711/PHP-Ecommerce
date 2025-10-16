@@ -174,10 +174,25 @@ $user_id = $_SESSION['id'];
                 data:{action:"insert",Fname:Fname,Lname:Lname,email:email,Saddress:Saddress,city:city,Pcode:Pcode,phone:phone,total:total}, 
                 success:function(response){
                     console.log(response)
+                  
                 },
                 error:function(xhr,status,error){
                     console.log(error)
                 },
+            })
+            $.ajax({
+              url:"api.php",
+              method:"POST",
+              data:{action:"createPayment",total:total}, 
+              dataType:'json',
+              success:function(response){
+                  console.log(response.url)
+                  console.log(response)
+                  window.location.href = response.url
+              },
+              error:function(xhr,status,error){
+                  console.log(error)
+              },
             })
         })
     })
