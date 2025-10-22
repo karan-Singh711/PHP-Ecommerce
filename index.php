@@ -46,7 +46,18 @@
             <div class="text-3xl font-bold" style="color: #98A1BC;">
                 E-Shop
             </div>
-            
+            <!-- Search Bar (keep old backend form) -->
+             <div class = 'flex-1 mx-8'>
+                <form class="hidden md:block" action="search.php" method="GET">
+                        <input 
+                        type="text" 
+                        name="q"
+                        placeholder="Search products..." 
+                        class="bg-white bg-opacity-20 text-black placeholder-gray-300 px-4 py-2 rounded-full outline-none focus:bg-opacity-30 transition w-full"/>
+                </form>
+             </div>
+           
+
             <!-- Menu Items -->
             <div class="hidden md:flex space-x-8 text-white font-medium">
                 <a href="/" class="hover:opacity-80 transition">Home</a>
@@ -55,17 +66,7 @@
                 <a href="/account" class="hover:opacity-80 transition">Account</a>
                 <a href="/contact" class="hover:opacity-80 transition">Contact</a>
             </div>
-            
-            <!-- Search Bar (keep old backend form) -->
-            <form class="hidden md:block" action="search.php" method="GET">
-                <input 
-                    type="text" 
-                    name="q"
-                    placeholder="Search products..." 
-                    class="bg-white bg-opacity-20 text-white placeholder-gray-300 px-4 py-2 rounded-full outline-none focus:bg-opacity-30 transition w-64"
-                />
-            </form>
-            
+              
             <!-- Mobile Menu Button -->
             <button class="md:hidden text-white text-2xl">☰</button>
         </div>
@@ -150,7 +151,6 @@
         class="relative group overflow-hidden rounded-2xl h-64 shadow-lg">
         <img src="public\images\model-career-kit-still-life.jpg" alt="Women Accessories"
           class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-        <div class="absolute inset-0 bg-gradient-to-t from-[#555879]/70 to-[#98A1BC]/30"></div>
         <p class="absolute bottom-4 left-4 text-white text-lg font-semibold group-hover:translate-y-[-4px] transition-transform">
           Women Accessories
         </p>
@@ -160,7 +160,6 @@
         class="relative group overflow-hidden rounded-2xl lg:row-span-2 shadow-lg h-64 sm:h-auto">
         <img src="public\images\young-handsome-man-choosing-hat-shop.jpg" alt="Men Clothing"
           class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-        <div class="absolute inset-0 bg-gradient-to-t from-[#555879]/70 to-[#98A1BC]/30"></div>
         <p class="absolute bottom-4 left-4 text-white text-lg font-semibold group-hover:translate-y-[-4px] transition-transform">
           Men Clothing
         </p>
@@ -170,7 +169,6 @@
         class="relative group overflow-hidden rounded-2xl h-64 shadow-lg">
         <img src="public\images\girl-wearing-trendy-shoes-shoes-close-up-shoot-fashion-store.jpg" alt="Footwear"
           class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-        <div class="absolute inset-0 bg-gradient-to-t from-[#555879]/70 to-[#98A1BC]/30"></div>
         <p class="absolute bottom-4 left-4 text-white text-lg font-semibold group-hover:translate-y-[-4px] transition-transform">
           Footwear
         </p>
@@ -180,7 +178,6 @@
         class="relative group overflow-hidden rounded-2xl h-64 shadow-lg">
         <img src="public\images\istockphoto-1355271375-1024x1024.jpg" alt="Jewelry"
           class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-        <div class="absolute inset-0 bg-gradient-to-t from-[#555879]/70 to-[#98A1BC]/30"></div>
         <p class="absolute bottom-4 left-4 text-white text-lg font-semibold group-hover:translate-y-[-4px] transition-transform">
           Jewelry
         </p>
@@ -190,7 +187,6 @@
         class="relative group overflow-hidden rounded-2xl h-64 shadow-lg">
         <img src="public/images/pexels-sanddollar-205436-634538.jpg" alt="Bags"
           class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-        <div class="absolute inset-0 bg-gradient-to-t from-[#555879]/70 to-[#98A1BC]/30"></div>
         <p class="absolute bottom-4 left-4 text-white text-lg font-semibold group-hover:translate-y-[-4px] transition-transform">
           Bags
         </p>
@@ -243,7 +239,7 @@
                         type="text" 
                         name="q"
                         placeholder="Search products..." 
-                        class="w-full bg-white bg-opacity-20 text-white placeholder-gray-300 px-4 py-2 rounded-full outline-none focus:bg-opacity-30 transition"
+                        class="w-full bg-white bg-opacity-20 text-black placeholder-gray-300 px-4 py-2 rounded-full outline-none focus:bg-opacity-30 transition"
                     />
                 </form>
             </div>
