@@ -376,5 +376,22 @@ if($_SERVER['REQUEST_METHOD']==='POST'
          echo json_encode(['response'=>'error','message'=>$e->getMessage()]);
       }
    }
-   
+   // if(isset($_POST['maxValue']) && isset($_POST['minValue']) && isset($_POST['productName']) && $_POST['action'] === 'priceFilter'){
+   //    $productName = $_POST['productName'];
+   //    $minValue =$_POST['minValue'];
+   //    $maxValue = $_POST['maxValue'];
+   //    try{
+   //       $priceFilterQuery = $pdo->prepare('SELECT * 
+   //       FROM products 
+   //       WHERE name_of_product = :productname 
+   //       AND price_of_product BETWEEN :lowprice AND :maxprice');
+   //       $priceFilterQuery->bindValue(':productname',$productName);
+   //       $priceFilterQuery->bindValue(':lowprice',$minValue);
+   //       $priceFilterQuery->bindValue(':maxprice',$maxValue);
+   //       $priceFilterQuery->execute();
+   //       echo json_encode(["response"=>"success",'message'=>'filter applied']);
+   //    }catch(PDOException $e){
+   //       die('error:'.$e->getMessage());
+   //    }
+   // }
 ?>
