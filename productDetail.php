@@ -400,7 +400,7 @@ if (isset($_GET['id'])){
                 $.ajax({
                     url: "api.php",
                     method: 'POST',
-                    data: {quantity: quantity, productId: productId},
+                    data: {action:'addedToCart',quantity: quantity, productId: productId},
                     success: function(response) {
                         console.log(response);
                         alert('Product added to cart!');
