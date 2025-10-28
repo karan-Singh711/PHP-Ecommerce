@@ -7,7 +7,7 @@ require_once 'dbConnection.php';
 require 'vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
-if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['quantity']) && isset($_POST['productId']) && isset($_SESSION['id'])){
+if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['quantity']) && isset($_POST['productId']) && isset($_SESSION['id']) && isset($_POST['action']) && $_POST['action'] === 'addedToCart' ){
  $quantity = $_POST['quantity']; 
  $productId = $_POST['productId'];
  $userId = $_SESSION['id'];
@@ -158,6 +158,9 @@ if($_SERVER['REQUEST_METHOD']==='POST'
          //    ],
          //    'quantity'=>$quantity
          // ]],
+         'metadata'=>[
+            'order_type'=>'cart'
+         ],
          'mode'=>'payment',
          'success_url'=>'http://localhost/e-commerce/index.php?s_id={CHECKOUT_SESSION_ID}',
          'cancel_url'=>'http://localhost/e-commerce/checkout.php'
@@ -394,4 +397,85 @@ if($_SERVER['REQUEST_METHOD']==='POST'
    //       die('error:'.$e->getMessage());
    //    }
    // }
+
+
+   // buy now button click
+   if(isset($_POST['firstName']) && 
+      isset($_POST['lastName']) &&
+      isset($_POST['phone']) &&
+      isset($_POST['email']) &&
+      isset($_POST['address']) &&
+      isset($_POST['productId']) && 
+      isset($_POST['quantity']) &&
+      isset($_POST['action']) && 
+      $_POST['action'] === 'buyNowBtnClick' ){
+      try{
+         $user_id =$_SESSION['id'];
+         $Fname = $_POST['firstName'];
+         $Lname = $_POST['lastName'];
+         $phone = $_POST['phone'];
+         $email = $_POST['email'];
+         $address = $_POST['address'];
+         $product_id = $_POST['productId'];
+         $quantity = $_POST['quantity'];
+
+         $totalQuery = $pdo->prepare('SELECT * FROM products WHERE id = :product_id');
+         $totalQuery->bindValue(':product_id',$product_id,PDO::PARAM_INT);
+         $totalQuery->execute();
+         $product_row = $totalQuery->fetch();
+         $total = floatval($product_row['price_of_product'] * $quantity);
+         $unit = intval($total * 100);
+         $buynowQuery = $pdo->prepare('INSERT INTO orders(user_id,first_name,last_name,email,user_phone,user_address,status,total,payment_status,payment_method,created_at)
+         VALUES(:user_id,:Fname,:Lname,:email,:phone,:address,:status,:total,:Pstatus,:Pmethod,:created_at)'); 
+         $buynowQuery->bindValue(':user_id',$user_id);
+         $buynowQuery->bindValue(':Fname',$Fname);
+         $buynowQuery->bindValue(':Lname',$Lname);
+         $buynowQuery->bindValue(':phone',$phone);
+         $buynowQuery->bindValue(':email',$email);
+         $buynowQuery->bindValue(':address',$address);
+         $buynowQuery->bindValue(':status','Pending');
+         $buynowQuery->bindValue(':total',$total);
+         $buynowQuery->bindValue(':Pstatus','Pending');
+         $buynowQuery->bindValue(':Pmethod','COD');
+         $buynowQuery->bindValue(':created_at',date('Y-m-d H:i:s'));
+         $buynowQuery->execute();
+         $order_id = $pdo->lastInsertId();
+         try{
+            \Stripe\Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
+         $buyNowCheckout = \Stripe\Checkout\Session::Create([
+            'payment_method_types'=>['card'],
+            'line_items'=>[[
+              'price_data'=>[
+                  'currency'=>'usd',
+                  'product_data'=>[
+                     'name'=>$product_row['name_of_product']
+                  ],
+                  'unit_amount'=>$unit
+              ],
+              'quantity'=> $_POST['quantity']
+            ]],
+            'metadata'=>[
+               'order_type'=>'buy_now',
+               'product_id'=>$product_id,
+               'quantity' =>$quantity
+            ],
+            'mode'=>'payment',
+            'success_url'=>'http://localhost/e-commerce/index.php?s_id={CHECKOUT_SESSION_ID}',
+            'cancel_url'=>'http://localhost/e-commerce/buyCheckout.php'
+         ]);
+         
+         $updateStripeIdQuery = $pdo->prepare('UPDATE orders SET stripe_checkoutID = :sid WHERE order_id = :oid');
+         $updateStripeIdQuery->bindValue(':oid',$order_id);
+         $updateStripeIdQuery->bindValue(':sid',$buyNowCheckout->id);
+         $updateStripeIdQuery->execute();
+
+          echo json_encode(['success'=>true,'message'=>'success','url'=>$buyNowCheckout->url]);
+         }catch(\Stripe\Exception\ApiErrorException $e){
+             echo json_encode(['success'=>false,'message'=>$e->getMessage()]);
+         }
+      }catch(PDOException $e ){
+         echo json_encode(['success'=>false,'message'=>$e->getMessage()]);
+      }
+
+      }
 ?>
