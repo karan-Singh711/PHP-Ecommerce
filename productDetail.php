@@ -358,6 +358,53 @@ if (isset($_GET['id'])){
                         </div>
                     </div>
                 </div>
+                <!-- Star Rating -->
+                
+                <!-- Add Review Section -->
+                <div class="mt-8">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-4">Write a Review</h3>
+                        <div class="flex items-center space-x-2 mb-2">
+                        <span class="text-gray-700 font-medium">Your Rating:</span>
+                        <div class="flex space-x-1">
+                            <input type="radio" name="rating" id="star5" value="5" class="hidden peer" />
+                            <label for="star5" class="cursor-pointer text-2xl text-gray-300 peer-checked:text-yellow-400 transition">★</label>
+
+                            <input type="radio" name="rating" id="star4" value="4" class="hidden peer" />
+                            <label for="star4" class="cursor-pointer text-2xl text-gray-300 peer-checked:text-yellow-400 transition">★</label>
+
+                            <input type="radio" name="rating" id="star3" value="3" class="hidden peer" />
+                            <label for="star3" class="cursor-pointer text-2xl text-gray-300 peer-checked:text-yellow-400 transition">★</label>
+
+                            <input type="radio" name="rating" id="star2" value="2" class="hidden peer" />
+                            <label for="star2" class="cursor-pointer text-2xl text-gray-300 peer-checked:text-yellow-400 transition">★</label>
+
+                            <input type="radio" name="rating" id="star1" value="1" class="hidden peer" />
+                            <label for="star1" class="cursor-pointer text-2xl text-gray-300 peer-checked:text-yellow-400 transition">★</label>
+                        </div>
+                    </div>
+                    <form class="bg-white rounded-2xl shadow-md p-6 space-y-4" >
+                        <textarea 
+                            id='comment' 
+                            name="review_text"
+                            placeholder="Share your experience..." 
+                            class="w-full h-32 p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#98A1BC] resize-none text-gray-800"
+                        ></textarea>
+                    </form>
+
+                        <!-- Submit Button (outside form) -->
+                    <div class="mt-4 text-right">
+                    <button 
+                        type="submit"
+                        form="reviewForm"
+                        id="submitReview"
+                        data-productid="<?php echo $_GET['id']; ?>"
+                        class="px-8 py-3 rounded-xl font-semibold text-white transition-all duration-300 hover:opacity-90"
+                        style="background: linear-gradient(135deg, #98A1BC, #555879);"
+                    >
+                        Submit Review
+                    </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -394,6 +441,30 @@ if (isset($_GET['id'])){
 
         // jQuery for Add to Cart functionality
         $(document).ready(() => {
+            let submitReviewBtn = $("#submitReview")
+            submitReviewBtn.on('click', function(event){
+                let productId = submitReviewBtn.data('productid')
+                console.log(productId)
+                console.log('hello')
+                let comment = $('#comment').val()
+                console.log(comment)
+                if (comment.trim()   !== ""){
+                    $.ajax({
+                        url:'api.php',
+                        method:'post',
+                        data:{action:'insertComment',comment:comment , productId:productId},
+                        success:function(response){
+                            console.log(response)
+                        },
+                        error:function(xhr,status,error){
+                            console.log(error)
+                        }
+                    })
+                }else{
+                    console.log('trim')
+                }
+                
+            })
             $("#addToCart").click(() => {
                 let productId = $("#addToCart").data('id');
                 let quantity = $('#quantity').val();
