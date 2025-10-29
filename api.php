@@ -478,4 +478,29 @@ if($_SERVER['REQUEST_METHOD']==='POST'
       }
 
       }
+      if(
+      isset($_POST['action']) &&
+      isset($_POST['comment']) &&
+      isset($_POST['productId']) &&
+      $_POST['action'] === 'insertComment'
+      )
+      {
+         $comment = trim($_POST['comment']);
+         $product_id = $_POST['productId'];
+         $user_id = $_SESSION['id'];
+         try{
+            $insertcomment = $pdo->prepare('INSERT INTO product_reviews(user_id,product_id,rating,comment,created_at,status) 
+            VALUES(:user_id,:product_id,:rating,:comment,:created_at,:status)');
+            $insertcomment->bindValue(':user_id',$user_id);
+            $insertcomment->bindValue(':product_id',$product_id);
+            $insertcomment->bindValue(':rating','5');
+            $insertcomment->bindValue(':comment',$comment);
+            $insertcomment->bindValue(':created_at',date('Y-m-d H:i:s'));
+            $insertcomment->bindValue(':status','Pending');
+            $insertcomment->execute();
+             echo json_encode(['success'=>true , 'message' => 'comment added']);
+         }catch(PDOException $e){
+            echo json_encode(['success'=>false]);
+         }
+      }
 ?>
