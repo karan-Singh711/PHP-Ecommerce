@@ -482,9 +482,11 @@ if($_SERVER['REQUEST_METHOD']==='POST'
       isset($_POST['action']) &&
       isset($_POST['comment']) &&
       isset($_POST['productId']) &&
+      isset($_POST['ratingValue']) &&
       $_POST['action'] === 'insertComment'
       )
       {
+         $ratingValue = intval($_POST['ratingValue']);
          $comment = trim($_POST['comment']);
          $product_id = $_POST['productId'];
          $user_id = $_SESSION['id'];
@@ -493,7 +495,12 @@ if($_SERVER['REQUEST_METHOD']==='POST'
             VALUES(:user_id,:product_id,:rating,:comment,:created_at,:status)');
             $insertcomment->bindValue(':user_id',$user_id);
             $insertcomment->bindValue(':product_id',$product_id);
-            $insertcomment->bindValue(':rating','5');
+            if ($ratingValue>0 && $ratingValue<=5 ){
+               $insertcomment->bindValue(':rating',$ratingValue);
+            }else{
+               $insertcomment->bindValue(':rating',NULL);
+            }
+            
             $insertcomment->bindValue(':comment',$comment);
             $insertcomment->bindValue(':created_at',date('Y-m-d H:i:s'));
             $insertcomment->bindValue(':status','Pending');
