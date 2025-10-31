@@ -2,13 +2,26 @@
 require_once 'dbConnection.php';
 
 if (isset($_GET['id'])){
-  $id=$_GET['id'];
-  $query = $pdo->prepare('SELECT * FROM products WHERE id = :id');
-  $query->bindValue(':id', $id);
-  $query->execute();
-  // fetch data 
-  $product = $query->fetch();
+    $id=intval($_GET['id']) ;
+    try{
+        if(intval($_GET['id'])){
+            $query = $pdo->prepare('SELECT * FROM products WHERE id = :id');
+            $query->bindValue(':id', $id);
+            $query->execute();
+            // fetch data 
+            $product = $query->fetch();
+
+            // comment from db
+            $commentQuery = $pdo->prepare('SELECT * FROM product_reviews  WHERE product_id = :product_id ORDER BY created_at DESC LIMIT 5' );
+            $commentQuery->bindValue(':product_id',$id);
+            $commentQuery->execute();
+            
+        }
+    }catch(PDOException $e){
+        die("error:".$e->getMessage());
+    }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -224,50 +237,67 @@ if (isset($_GET['id'])){
         <div class="mb-16">
             <h2 class="text-3xl font-bold text-gray-900 mb-6">Customer Reviews</h2>
             <div class="bg-white rounded-2xl shadow-lg p-8">
+                <?php
+                while($commentrow = $commentQuery->fetch()){
+                    if($commentrow['rating'] === 1){
+                        $stars = "★";
+                    }elseif ($commentrow['rating'] === 2) {
+                       $stars = "★★";
+                    }elseif ($commentrow['rating'] === 3) {
+                       $stars = "★★★";
+                    }elseif ($commentrow['rating'] === 4) {
+                       $stars = "★★★★";
+                    }elseif ($commentrow['rating'] === 5) {
+                       $stars = "★★★★★";
+                    }elseif ($commentrow['rating'] === NULL) {
+                       $stars = "";
+                    }
+                    echo '<div class="mb-8 pb-8 border-b border-gray-200">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0">
+                                    <div class="w-12 h-12 rounded-full overflow-hidden" 
+                                        style="background: linear-gradient(135deg, #98A1BC, #555879);">
+                                        <img 
+                                            src="https://i.pravatar.cc/150?img=12" 
+                                            alt="Sarah Johnson" 
+                                            class="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div>
+                                            <h4 class="font-bold text-gray-900">Sarah Johnson</h4>
+                                            <p class="text-sm text-gray-500">October 25, 2025</p>
+                                        </div>
+                                        <div class="flex space-x-1">
+                                            <span class="text-yellow-400">'.$stars.'</span>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-700 leading-relaxed mb-4">
+                                        '.$commentrow['comment'].'
+                                    </p>
+                                    <div class="flex items-center space-x-6 text-gray-500">
+                                        <button class="flex items-center space-x-2 hover:text-gray-700 transition">
+                                            <span>👍</span>
+                                            <span class="text-sm">24</span>
+                                        </button>
+                                        <button class="flex items-center space-x-2 hover:text-gray-700 transition">
+                                            <span>💬</span>
+                                            <span class="text-sm">Reply</span>
+                                        </button>
+                                        <button class="flex items-center space-x-2 hover:text-red-500 transition">
+                                            <span>❤️</span>
+                                            <span class="text-sm">8</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>';
+                }
+                ?>
                 <!-- Review 1 -->
-                <div class="mb-8 pb-8 border-b border-gray-200">
-                    <div class="flex items-start space-x-4">
-                        <div class="flex-shrink-0">
-                            <div class="w-12 h-12 rounded-full overflow-hidden" 
-                                 style="background: linear-gradient(135deg, #98A1BC, #555879);">
-                                <img 
-                                    src="https://i.pravatar.cc/150?img=12" 
-                                    alt="Sarah Johnson" 
-                                    class="w-full h-full object-cover"
-                                />
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between mb-2">
-                                <div>
-                                    <h4 class="font-bold text-gray-900">Sarah Johnson</h4>
-                                    <p class="text-sm text-gray-500">October 25, 2025</p>
-                                </div>
-                                <div class="flex space-x-1">
-                                    <span class="text-yellow-400">★★★★★</span>
-                                </div>
-                            </div>
-                            <p class="text-gray-700 leading-relaxed mb-4">
-                                Absolutely love this product! The quality is exceptional and it works perfectly. 
-                                I use it daily and couldn't be happier with my purchase. Highly recommended!
-                            </p>
-                            <div class="flex items-center space-x-6 text-gray-500">
-                                <button class="flex items-center space-x-2 hover:text-gray-700 transition">
-                                    <span>👍</span>
-                                    <span class="text-sm">24</span>
-                                </button>
-                                <button class="flex items-center space-x-2 hover:text-gray-700 transition">
-                                    <span>💬</span>
-                                    <span class="text-sm">Reply</span>
-                                </button>
-                                <button class="flex items-center space-x-2 hover:text-red-500 transition">
-                                    <span>❤️</span>
-                                    <span class="text-sm">8</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
                 
                 <!-- Review 2 -->
                 <div class="mb-8 pb-8 border-b border-gray-200">
@@ -365,21 +395,21 @@ if (isset($_GET['id'])){
                     <h3 class="text-2xl font-semibold text-gray-900 mb-4">Write a Review</h3>
                         <div class="flex items-center space-x-2 mb-2">
                         <span class="text-gray-700 font-medium">Your Rating:</span>
-                        <div class="flex space-x-1">
-                            <input type="radio" name="rating" id="star5" value="5" class="hidden peer" />
-                            <label for="star5" class="cursor-pointer text-2xl text-gray-300 peer-checked:text-yellow-400 transition">★</label>
+                        <div class="flex flex-row-reverse justify-center">
+                            <input type="radio" id="star5" name="rating" value="5" class="hidden peer" />
+                            <label for="star5" class="text-gray-300 text-3xl cursor-pointer peer-checked:text-yellow-400 hover:text-yellow-400">★</label>
 
-                            <input type="radio" name="rating" id="star4" value="4" class="hidden peer" />
-                            <label for="star4" class="cursor-pointer text-2xl text-gray-300 peer-checked:text-yellow-400 transition">★</label>
+                            <input type="radio" id="star4" name="rating" value="4" class="hidden peer" />
+                            <label for="star4" class="text-gray-300 text-3xl cursor-pointer peer-checked:text-yellow-400 hover:text-yellow-400">★</label>
 
-                            <input type="radio" name="rating" id="star3" value="3" class="hidden peer" />
-                            <label for="star3" class="cursor-pointer text-2xl text-gray-300 peer-checked:text-yellow-400 transition">★</label>
+                            <input type="radio" id="star3" name="rating" value="3" class="hidden peer" />
+                            <label for="star3" class="text-gray-300 text-3xl cursor-pointer peer-checked:text-yellow-400 hover:text-yellow-400">★</label>
 
-                            <input type="radio" name="rating" id="star2" value="2" class="hidden peer" />
-                            <label for="star2" class="cursor-pointer text-2xl text-gray-300 peer-checked:text-yellow-400 transition">★</label>
+                            <input type="radio" id="star2" name="rating" value="2" class="hidden peer" />
+                            <label for="star2" class="text-gray-300 text-3xl cursor-pointer peer-checked:text-yellow-400 hover:text-yellow-400">★</label>
 
-                            <input type="radio" name="rating" id="star1" value="1" class="hidden peer" />
-                            <label for="star1" class="cursor-pointer text-2xl text-gray-300 peer-checked:text-yellow-400 transition">★</label>
+                            <input type="radio" id="star1" name="rating" value="1" class="hidden peer" />
+                            <label for="star1" class="text-gray-300 text-3xl cursor-pointer peer-checked:text-yellow-400 hover:text-yellow-400">★</label>
                         </div>
                     </div>
                     <form class="bg-white rounded-2xl shadow-md p-6 space-y-4" >
@@ -441,6 +471,13 @@ if (isset($_GET['id'])){
 
         // jQuery for Add to Cart functionality
         $(document).ready(() => {
+            let ratingValue = 0
+            let ratingBtn = $('input[name = "rating"]')
+            ratingBtn.on('click',function(){
+                 ratingValue = $(this).val()
+                
+            })
+           
             let submitReviewBtn = $("#submitReview")
             submitReviewBtn.on('click', function(event){
                 let productId = submitReviewBtn.data('productid')
@@ -452,7 +489,7 @@ if (isset($_GET['id'])){
                     $.ajax({
                         url:'api.php',
                         method:'post',
-                        data:{action:'insertComment',comment:comment , productId:productId},
+                        data:{action:'insertComment',comment:comment , productId:productId,ratingValue:ratingValue},
                         success:function(response){
                             console.log(response)
                         },
