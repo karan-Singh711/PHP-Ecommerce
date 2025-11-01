@@ -505,6 +505,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'
             $insertcomment->bindValue(':created_at',date('Y-m-d H:i:s'));
             $insertcomment->bindValue(':status','Pending');
             $insertcomment->execute();
+            header('Location:productDetail.php?id='.$product_id);
              echo json_encode(['success'=>true , 'message' => 'comment added']);
          }catch(PDOException $e){
             echo json_encode(['success'=>false]);
