@@ -275,7 +275,7 @@ if (isset($_GET['id'])){
                                         </div>
                                     </div>
                                     <p class="text-gray-700 leading-relaxed mb-4">
-                                        '.$commentrow['comment'].'
+                                        '.htmlspecialchars($commentrow['comment']).'
                                     </p>
                                     <div class="flex items-center space-x-6 text-gray-500">
                                         <button class="flex items-center space-x-2 hover:text-gray-700 transition">
@@ -295,101 +295,7 @@ if (isset($_GET['id'])){
                             </div>
                         </div>';
                 }
-                ?>
-                <!-- Review 1 -->
-                
-                
-                <!-- Review 2 -->
-                <div class="mb-8 pb-8 border-b border-gray-200">
-                    <div class="flex items-start space-x-4">
-                        <div class="flex-shrink-0">
-                            <div class="w-12 h-12 rounded-full overflow-hidden" 
-                                 style="background: linear-gradient(135deg, #98A1BC, #555879);">
-                                <img 
-                                    src="https://i.pravatar.cc/150?img=33" 
-                                    alt="Michael Chen" 
-                                    class="w-full h-full object-cover"
-                                />
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between mb-2">
-                                <div>
-                                    <h4 class="font-bold text-gray-900">Michael Chen</h4>
-                                    <p class="text-sm text-gray-500">October 22, 2025</p>
-                                </div>
-                                <div class="flex space-x-1">
-                                    <span class="text-yellow-400">★★★★☆</span>
-                                </div>
-                            </div>
-                            <p class="text-gray-700 leading-relaxed mb-4">
-                                Great product for the price. The build quality feels premium and it works well.
-                                Very satisfied with my purchase and would recommend to others!
-                            </p>
-                            <div class="flex items-center space-x-6 text-gray-500">
-                                <button class="flex items-center space-x-2 hover:text-gray-700 transition">
-                                    <span>👍</span>
-                                    <span class="text-sm">15</span>
-                                </button>
-                                <button class="flex items-center space-x-2 hover:text-gray-700 transition">
-                                    <span>💬</span>
-                                    <span class="text-sm">Reply</span>
-                                </button>
-                                <button class="flex items-center space-x-2 hover:text-red-500 transition">
-                                    <span>❤️</span>
-                                    <span class="text-sm">5</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Review 3 -->
-                <div>
-                    <div class="flex items-start space-x-4">
-                        <div class="flex-shrink-0">
-                            <div class="w-12 h-12 rounded-full overflow-hidden" 
-                                 style="background: linear-gradient(135deg, #98A1BC, #555879);">
-                                <img 
-                                    src="https://i.pravatar.cc/150?img=47" 
-                                    alt="Emma Davis" 
-                                    class="w-full h-full object-cover"
-                                />
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between mb-2">
-                                <div>
-                                    <h4 class="font-bold text-gray-900">Emma Davis</h4>
-                                    <p class="text-sm text-gray-500">October 20, 2025</p>
-                                </div>
-                                <div class="flex space-x-1">
-                                    <span class="text-yellow-400">★★★★★</span>
-                                </div>
-                            </div>
-                            <p class="text-gray-700 leading-relaxed mb-4">
-                                Best product I've purchased! Amazing quality and great value for money.
-                                Highly recommend to anyone looking for a premium experience.
-                            </p>
-                            <div class="flex items-center space-x-6 text-gray-500">
-                                <button class="flex items-center space-x-2 hover:text-gray-700 transition">
-                                    <span>👍</span>
-                                    <span class="text-sm">31</span>
-                                </button>
-                                <button class="flex items-center space-x-2 hover:text-gray-700 transition">
-                                    <span>💬</span>
-                                    <span class="text-sm">Reply</span>
-                                </button>
-                                <button class="flex items-center space-x-2 hover:text-red-500 transition">
-                                    <span>❤️</span>
-                                    <span class="text-sm">12</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Star Rating -->
-                
+                ?>                
                 <!-- Add Review Section -->
                 <div class="mt-8">
                     <h3 class="text-2xl font-semibold text-gray-900 mb-4">Write a Review</h3>
