@@ -91,6 +91,44 @@
       border-radius: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
+    .feature-input-group {
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #dee2e6;
+    }
+    .feature-input-group input {
+      margin-bottom: 8px;
+    }
+    .feature-input-group input:last-child {
+      margin-bottom: 0;
+    }
+    .table-wrapper {
+      overflow-x: auto;
+    }
+    .table th {
+      background-color: #555879;
+      color: white;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .table td {
+      vertical-align: middle;
+    }
+    .table tbody tr:hover {
+      background-color: #f1f3f5;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    .product-image-thumb {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
   </style>
 </head>
 <body>
@@ -99,7 +137,7 @@
     <button class="toggle-btn" id="sidebarToggle">&#9776;</button>
     <a href="Dashboard.html"><span>Dashboard</span></a>
     <a href="admin_addProduct.php"><span>Add Product</span></a>
-     <a href="admin_orderManage.php"><span>Order Management</span></a>
+    <a href="admin_orderManage.php"><span>Order Management</span></a>
   </div>
 
   <!-- Header -->
@@ -109,7 +147,7 @@
 
   <!-- Main Content -->
   <div class="main-content">
-    <div class="container">
+    <div class="container-fluid">
 
       <?php
       session_start();
@@ -125,46 +163,44 @@
             echo "error : " . $e;
         }
       }
-      if(isset($_POST['submit']) && isset($_POST['productName']) && isset($_POST['productDescription']) && isset($_POST['productPrice']) && isset($_FILES['productImage']) && isset($_POST['stocks']) 
-        && isset($_SESSION['id'])){
+      // if(isset($_POST['submit']) && isset($_POST['productName']) && isset($_POST['productDescription']) && isset($_POST['productPrice']) && isset($_FILES['productImage']) && isset($_POST['stocks']) 
+      //   && isset($_SESSION['id'])){
           
-        $productName = $_POST['productName'];
-        $productDescription = $_POST['productDescription'];
-        $productPrice = $_POST['productPrice'];
-        $productImage = $_FILES['productImage'];
-        $stocks = $_POST['stocks'];
-        $user_id = $_SESSION['id'];
+      //   $productName = $_POST['productName'];
+      //   $productDescription = $_POST['productDescription'];
+      //   $productPrice = $_POST['productPrice'];
+      //   $productImage = $_FILES['productImage'];
+      //   $stocks = $_POST['stocks'];
+      //   $user_id = $_SESSION['id'];
     
-        $imageName = basename($productImage['name']);
-        $uploadImage = "../public/images/".time().$imageName;
-        $imagepath = "public/images/".time().$imageName;
+      //   $imageName = basename($productImage['name']);
+      //   $uploadImage = "../public/images/".time().$imageName;
+      //   $imagepath = "public/images/".time().$imageName;
 
-        $sended = move_uploaded_file($productImage['tmp_name'],$uploadImage);
-        if(!$sended){
-          echo "<div class='alert alert-danger'>File not uploaded</div>";
-        }
-        try{
-          $query= $pdo->prepare("INSERT INTO products (name_of_product,description_of_product,price_of_product,image,stocks,added_by) 
-          VALUES (:productName,:productDescription,:productPrice,:productImage,:stocks,:added_by)");
-          $query->bindValue(':productName',$productName);
-          $query->bindValue(':productDescription',$productDescription);
-          $query->bindValue(':productPrice',$productPrice);
-          $query->bindValue(':productImage',$imagepath);
-          $query->bindValue(':stocks',$stocks);
-          $query->bindValue(':added_by',$user_id);
-          $query->execute();
+      //   $sended = move_uploaded_file($productImage['tmp_name'],$uploadImage);
+      //   if(!$sended){
+      //     echo "<div class='alert alert-danger'>File not uploaded</div>";
+      //   }
+      //   try{
+      //     $query= $pdo->prepare("INSERT INTO products (name_of_product,description_of_product,price_of_product,image,stocks,added_by) 
+      //     VALUES (:productName,:productDescription,:productPrice,:productImage,:stocks,:added_by)");
+      //     $query->bindValue(':productName',$productName);
+      //     $query->bindValue(':productDescription',$productDescription);
+      //     $query->bindValue(':productPrice',$productPrice);
+      //     $query->bindValue(':productImage',$imagepath);
+      //     $query->bindValue(':stocks',$stocks);
+      //     $query->bindValue(':added_by',$user_id);
+      //     $query->execute();
           
-          header('Location:admin_addProduct.php');
-          exit();
+      //     header('Location:admin_addProduct.php');
+      //     exit();
          
           
-        }catch(PDOException $e){
-          die("error occur:".$e->getMessage());
-        }
+      //   }catch(PDOException $e){
+      //     die("error occur:".$e->getMessage());
+      //   }
         
-      }   
-
-      
+      // }   
       ?>
 
       <!-- Page Title -->
@@ -173,46 +209,94 @@
         <p class="text-muted">Add and manage your product inventory</p>
       </div>
 
-      <!-- Add Product Form -->
-      <div class="card p-4 mb-4">
-        <h5 class="mb-3" style="color:#555879;">Add New Product</h5>
-        <form action="" method="post" enctype="multipart/form-data">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label for="name" class="form-label">Product Name *</label>
-              <input type="text" class="form-control" id="name" name="productName" required>
+      <!-- Two Column Layout: Add Product Form & Product Specific Details -->
+      <div class="row mb-4">
+        
+        <!-- Left Column: Add Product Form -->
+        <div class="col-lg-6 mb-4 mb-lg-0">
+          <div class="card p-4 h-100">
+            <h5 class="mb-3" style="color:#555879;">Add New Product</h5>
+            <form action="" method="post" enctype="multipart/form-data">
+              <div class="mb-3">
+                <label for="name" class="form-label">Product Name *</label>
+                <input type="text" class="form-control" id="name" name="productName" required>
+              </div>
+              
+              <div class="mb-3">
+                <label for="price" class="form-label">Price *</label>
+                <input type="number" step="0.01" class="form-control" id="price" name="productPrice" required>
+              </div>
+              
+              <div class="mb-3">
+                <label for="description" class="form-label">Description *</label>
+                <textarea class="form-control" id="description" name="productDescription" rows="3" required></textarea>
+              </div>
+              
+              <div class="mb-3">
+                <label for="stocks" class="form-label">Stock Quantity *</label>
+                <input type="number" class="form-control" id="stocks" name="stocks" required>
+              </div>
+              
+              <div class="mb-3">
+                <label for="image" class="form-label">Product Image *</label>
+                <input type="file" class="form-control" id="image" name="productImage" accept="image/*" required>
+              </div>
+              
+              
+            </form>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-custom w-100" name="submit" id = "addProduct">
+                  <i class="bi bi-plus-circle"></i> Add Product
+                </button>
+              </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Product Specific Details -->
+        <div class="col-lg-6">
+          <div class="card p-4 h-100">
+            <h5 class="mb-3" style="color:#555879;">Product Specific Details</h5>
+            <p class="text-muted small mb-3">Add custom features for your product (optional)</p>
+            
+            <div class="row g-3">
+              <div class="col-12">
+                <div class="feature-input-group">
+                  <label class="form-label fw-semibold small">Feature 1 (e.g., Color)</label>
+                  <input type="text" id="feature1" name="feature" placeholder="Feature Name (e.g., Color)" class="form-control form-control-sm">
+                  <input type="text" id="value1" name="value" placeholder="Feature Value (e.g., Red)" class="form-control form-control-sm">
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="feature-input-group">
+                  <label class="form-label fw-semibold small">Feature 2 (e.g., Material)</label>
+                  <input type="text" id="feature2" name="feature" placeholder="Feature Name (e.g., Material)" class="form-control form-control-sm">
+                  <input type="text" id="value2" name="value" placeholder="Feature Value (e.g., Cotton)" class="form-control form-control-sm">
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="feature-input-group">
+                  <label class="form-label fw-semibold small">Feature 3 (e.g., Size)</label>
+                  <input type="text" id="feature3" name="feature" placeholder="Feature Name (e.g., Size)" class="form-control form-control-sm">
+                  <input type="text" id="value3" name="value" placeholder="Feature Value (e.g., XL)" class="form-control form-control-sm">
+                </div>
+              </div>
             </div>
-            <div class="col-md-6">
-              <label for="price" class="form-label">Price *</label>
-              <input type="number" step="0.01" class="form-control" id="price" name="productPrice" required>
-            </div>
-            <div class="col-12">
-              <label for="description" class="form-label">Description</label>
-              <textarea class="form-control" id="description" name="productDescription" rows="3" required></textarea>
-            </div>
-            <div class="col-md-6">
-              <label for="stocks" class="form-label">Stock Quantity *</label>
-              <input type="number" class="form-control" id="stocks" name="stocks" required>
-            </div>
-            <div class="col-md-6">
-              <label for="image" class="form-label">Product Image</label>
-              <input type="file" class="form-control" id="image" name="productImage" accept="image/*" required>
+
+            <div class="alert alert-info mt-3 mb-0 small">
+              <strong>Note:</strong> These features are for reference and can help describe your product better.
             </div>
           </div>
-          <div class="mt-4">
-            <button type="submit" class="btn btn-custom" name="submit">
-              <i class="bi bi-plus-circle"></i> Add Product
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
       
       <!-- Product Table -->
       <div class="card p-4">
         <h5 class="mb-3" style="color:#555879;">My Products</h5>
-        <div class="table-responsive">
-          <table class="table table-bordered align-middle">
-            <thead class="table-light">
+        <div class="table-wrapper">
+          <table class="table table-hover align-middle" id = 'productTable'>
+            <thead>
               <tr>
                 <th scope="col">Image</th>
                 <th scope="col">Name</th>
@@ -224,13 +308,11 @@
               </tr>
             </thead>
             <tbody>
-            <!-- Example Row -->
-             <?php
+            <?php
              while($row = $tablequery->fetch()){
-                
                 echo '  <tr data-id = ' . $row['id'] . '>          
                             <td>
-                                <img src="../' . $row['image'] . '" class="img-thumbnail img" alt="Product Image" width="75">
+                                <img src="../' . $row['image'] . '" class="img-thumbnail img product-image-thumb" alt="Product Image">
                             </td>
                             <td class = "name">'. $row['name_of_product'] . '</td>
                             <td class = "price">$'. $row['price_of_product'] . '</td>
@@ -238,8 +320,10 @@
                             <td class = "description">' . $row['description_of_product'] . '</td>
                             <td class = "time">' . $row['created_at'] . '</td>
                             <td>
-                                <button class="btn btn-sm editBtn" style="background:#555879; color:white;" data-id = ' . $row['id'] . '>Edit</button>
-                                <button data-id = ' . $row['id'] . ' class="btn btn-sm delete" style="background:#98A1BC; color:white;">Delete</button>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm editBtn" style="background:#555879; color:white;" data-id = ' . $row['id'] . '>Edit</button>
+                                    <button data-id = ' . $row['id'] . ' class="btn btn-sm delete" style="background:#98A1BC; color:white;">Delete</button>
+                                </div>
                             </td>
                         </tr>';
              }
@@ -248,6 +332,8 @@
           </table>
         </div>
       </div>
+
+      <!-- Edit Product Modal -->
       <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
@@ -284,7 +370,7 @@
               </form>
             </div>
 
-              <!-- Modal Footer -->
+            <!-- Modal Footer -->
             <div class="modal-footer">
               <button type="button" class="btn" style="background:#98A1BC; color:white;" data-bs-dismiss="modal">Cancel</button>
               <button type="button" class="btn" style="background:#555879; color:white;" id = "update" form ='editform' >Save Changes</button>
@@ -298,12 +384,62 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.js"></script>
   <script>
-    // document.getElementById('sidebarToggle').addEventListener('click', function() {
-    //   const sidebar = document.getElementById('sidebar');
-    //   sidebar.classList.toggle('active');
-    // });
-
     $(document).ready(function(){
+      let addProductBtn = $('#addProduct')
+      addProductBtn.on('click',function(e){
+        e.preventDefault()
+        let Pfile = $('#image').prop('files')[0]
+        let formData = new FormData()
+        formData.append('productName',$('#name').val())
+        formData.append('productPrice',$('#price').val())
+        formData.append('productDescription',$('#description').val())
+        formData.append('stocks',$('#stocks').val())
+        formData.append('productImage',Pfile);
+        formData.append('action','insertProduct')
+        
+       
+        console.log('hello')
+        $.ajax({
+          url:'../api.php', 
+          method:'POST',
+          data: formData,
+          dataType:'json',
+          contentType : false, 
+          processData: false,
+          success:function(response){
+            console.log(response)
+            if(response.success){
+              let tableHtml = `<tr data-id = ${response.product.id}>          
+                            <td>
+                                <img src="../${response.product.image}" class="img-thumbnail img product-image-thumb" alt="Product Image">
+                            </td>
+                            <td class = "name">${response.product.name_of_product}</td>
+                            <td class = "price">$${response.product.price_of_product}</td>
+                            <td class = "stocks">${response.product.stocks}</td>
+                            <td class = "description">${response.product.description_of_product}</td>
+                            <td class = "time">${response.product.created_at}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm editBtn" style="background:#555879; color:white;" data-id = ${response.product.id}>Edit</button>
+                                    <button data-id =${response.product.id} class="btn btn-sm delete" style="background:#98A1BC; color:white;">Delete</button>
+                                </div>
+                            </td>
+                        </tr>`
+                        $("#productTable tbody").append(tableHtml);
+            }
+          },
+          error:function(xhr,status,error){
+            console.log(error)
+          }
+        })
+      })
+      let spec_keys = $('input[name=feature]')
+      console.log(spec_keys)
+
+      // let specKeyValue = spec_keys.map(index){
+      //   $(this).val()
+      // }.get()
+      // console.log(specKeyValue)
         let deleteBtn = $(".delete")
         deleteBtn.on("click" , function(){
             let Pid = $(this).data("id")
@@ -339,7 +475,6 @@
         $("#editPrice").val(price)
         $("#editStocks").val(stocks)
         $("#editDescription").val(description)
-        // $("#editImage").val(image)
         $("#editProductModal").modal('show')
       })
       let updateBtn = $("#update")
