@@ -511,4 +511,55 @@ if($_SERVER['REQUEST_METHOD']==='POST'
             echo json_encode(['success'=>false]);
          }
       }
+      if(isset($_POST['action']) && isset($_POST['productName']) && isset($_POST['productDescription']) && isset($_POST['productPrice']) && isset($_FILES['productImage']) && isset($_POST['stocks']) 
+        && isset($_SESSION['id']) && $_POST['action'] === 'insertProduct'){
+          
+        $productName = $_POST['productName'];
+        $productDescription = $_POST['productDescription'];
+        $productPrice = $_POST['productPrice'];
+        $productImage = $_FILES['productImage'];
+        $stocks = $_POST['stocks'];
+        $user_id = $_SESSION['id'];
+    
+        $imageName = basename($productImage['name']);
+        $uploadImage = "public/images/".time().$imageName;
+        $imagepath = "public/images/".time().$imageName;
+
+        $sended = move_uploaded_file($productImage['tmp_name'],$uploadImage);
+        if(!$sended){
+          echo "<div class='alert alert-danger'>File not uploaded</div>";
+        }
+        try{
+          $query= $pdo->prepare("INSERT INTO products (name_of_product,description_of_product,price_of_product,image,stocks,added_by) 
+          VALUES (:productName,:productDescription,:productPrice,:productImage,:stocks,:added_by)");
+          $query->bindValue(':productName',$productName);
+          $query->bindValue(':productDescription',$productDescription);
+          $query->bindValue(':productPrice',$productPrice);
+          $query->bindValue(':productImage',$imagepath);
+          $query->bindValue(':stocks',$stocks);
+          $query->bindValue(':added_by',$user_id);
+          $query->execute();
+          $product_id=$pdo->lastInsertId();
+          $keys = $_POST['feature'];
+          $values = $_POST['value'];
+         
+          foreach($keys as $index => $key){
+            $product_spec_insert= $pdo->prepare('INSERT INTO product_specs(product_id,spec_key,spec_value)
+            VALUES(:product_id, :spec_key , :spec_value)');
+            $product_spec_insert->bindValue(':product_id',$product_id);
+            $product_spec_insert->bindValue(':spec_key',$key);
+            $product_spec_insert->bindValue(':spec_value',$values[$index]);
+            $product_spec_insert->execute();
+          }
+
+          $selectProduct = $pdo->prepare('SELECT * FROM products WHERE id = :product_id');
+          $selectProduct->bindValue(':product_id',$product_id);
+          $selectProduct->execute();
+          $product_row = $selectProduct->fetch();
+          echo json_encode(['success' => true, 'message' => 'Product added successfully','product'=>$product_row, 'specfic_key'=>$_POST['feature'],'spec_value'=>$_POST['value']]);
+        }catch(PDOException $e){
+          echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        
+      } 
 ?>
