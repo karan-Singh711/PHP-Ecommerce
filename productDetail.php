@@ -15,7 +15,11 @@ if (isset($_GET['id'])){
             $commentQuery = $pdo->prepare('SELECT * FROM product_reviews  WHERE product_id = :product_id ORDER BY created_at DESC LIMIT 5' );
             $commentQuery->bindValue(':product_id',$id);
             $commentQuery->execute();
-            
+            // product speci query 
+            $product_spec_query = $pdo->prepare('SELECT * FROM product_specs WHERE product_id = :product_id');
+            $product_spec_query->bindValue(':product_id',$id);
+            $product_spec_query->execute();
+
         }
     }catch(PDOException $e){
         die("error:".$e->getMessage());
@@ -162,26 +166,16 @@ if (isset($_GET['id'])){
             <h2 class="text-3xl font-bold text-gray-900 mb-6">Product Specifications</h2>
             <div class="bg-white rounded-2xl shadow-lg p-8">
                 <ul class="space-y-3 text-gray-700">
-                    <li class="flex items-center">
+                    <?php 
+                    while($row=$product_spec_query->fetch()){
+                        echo '<li class="flex items-center">
                         <span class="w-2 h-2 rounded-full mr-3" style="background: linear-gradient(135deg, #98A1BC, #555879);"></span>
-                        Material: Premium Quality
-                    </li>
-                    <li class="flex items-center">
-                        <span class="w-2 h-2 rounded-full mr-3" style="background: linear-gradient(135deg, #98A1BC, #555879);"></span>
-                        Dimensions: 10 x 6 x 4 inches
-                    </li>
-                    <li class="flex items-center">
-                        <span class="w-2 h-2 rounded-full mr-3" style="background: linear-gradient(135deg, #98A1BC, #555879);"></span>
-                        Weight: 1.2 kg
-                    </li>
-                    <li class="flex items-center">
-                        <span class="w-2 h-2 rounded-full mr-3" style="background: linear-gradient(135deg, #98A1BC, #555879);"></span>
-                        Color: Black
-                    </li>
-                    <li class="flex items-center">
-                        <span class="w-2 h-2 rounded-full mr-3" style="background: linear-gradient(135deg, #98A1BC, #555879);"></span>
-                        Warranty: 1 Year
-                    </li>
+                       '.ucfirst($row['spec_key']).':'.ucfirst($row['spec_value']).'
+                        </li>';
+                    }
+                    
+                    ?>
+                    
                 </ul>
             </div>
         </div>
