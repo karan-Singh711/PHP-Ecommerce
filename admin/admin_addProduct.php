@@ -386,71 +386,7 @@
   <script>
     $(document).ready(function(){
       let addProductBtn = $('#addProduct')
-      // addProductBtn.on('click',function(e){
-      //   e.preventDefault()
-      //   let spec_keys = $('input[name=feature]')
-      //   console.log(spec_keys)
-      //   let specValueInput = $('input[name=value]')
-      //   let specValue = specValueInput.map(function(index,element){
-      //     return $(this).val()
-      //   }).get()
-      //   let specKeyValue = spec_keys.map(function(index,element){
-      //     return $(this).val()
-      //   }).get()
-
-      //   console.log(specValue) // value
-      //   console.log(specKeyValue) //feature
-      //   let Pfile = $('#image').prop('files')[0]
-      //   let formData = new FormData()
-      //   specKeyValue.forEach(function(element , index){
-      //     formData.append('feature[]',element)
-      //   })
-      //    specValue.forEach(function(element , index){
-      //     formData.append('value[]',element)
-      //   })
-      //   formData.append('productName',$('#name').val())
-      //   formData.append('productPrice',$('#price').val())
-      //   formData.append('productDescription',$('#description').val())
-      //   formData.append('stocks',$('#stocks').val())
-      //   formData.append('productImage',Pfile);
-      //   formData.append('action','insertProduct')
-        
-       
-      //   console.log('hello')
-      //   $.ajax({
-      //     url:'../api.php', 
-      //     method:'POST',
-      //     data: formData,
-      //     dataType:'json',
-      //     contentType : false, 
-      //     processData: false,
-      //     success:function(response){
-      //       console.log(response)
-      //       if(response.success){
-      //         let tableHtml = `<tr data-id = ${response.product.id}>          
-      //                       <td>
-      //                           <img src="../${response.product.image}" class="img-thumbnail img product-image-thumb" alt="Product Image">
-      //                       </td>
-      //                       <td class = "name">${response.product.name_of_product}</td>
-      //                       <td class = "price">$${response.product.price_of_product}</td>
-      //                       <td class = "stocks">${response.product.stocks}</td>
-      //                       <td class = "description">${response.product.description_of_product}</td>
-      //                       <td class = "time">${response.product.created_at}</td>
-      //                       <td>
-      //                           <div class="action-buttons">
-      //                               <button class="btn btn-sm editBtn" style="background:#555879; color:white;" data-id = ${response.product.id}>Edit</button>
-      //                               <button data-id =${response.product.id} class="btn btn-sm delete" style="background:#98A1BC; color:white;">Delete</button>
-      //                           </div>
-      //                       </td>
-      //                   </tr>`
-      //                   $("#productTable tbody").append(tableHtml);
-      //       }
-      //     },
-      //     error:function(xhr,status,error){
-      //       console.log(error)
-      //     }
-      //   })
-      // })
+      
 
 
       // let specKeyValue = spec_keys.map(index){
