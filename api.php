@@ -549,7 +549,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'
             $product_spec_insert->bindValue(':product_id',$product_id);
             $product_spec_insert->bindValue(':spec_key',$key);
             $product_spec_insert->bindValue(':spec_value',$values[$index]);
-            $product_spec_insert->execute()
+            $product_spec_insert->execute();
           }
 
           $selectProduct = $pdo->prepare('SELECT * FROM products WHERE id = :product_id');
