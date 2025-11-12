@@ -3,14 +3,23 @@ session_start();
 require_once('../dbConnection.php');
 
 try{
+    $page = isset($_GET['page']) ? intval($_GET['page']) : 1 ;
+    $orders_per_page = 5;
+    if($page < 1 || !is_int($page)){
+      $page = 1;
+    }
+    $offset = ($page-1) * $orders_per_page;   
     $user_id = $_SESSION['id'];
-    $query = $pdo->prepare('SELECT o.order_id ,COUNT(i.product_id) AS product_id, o.first_name,o.last_name,o.status,MAX(p.price_of_product) AS price_of_product,o.created_at,SUM(i.quantity) AS quantity,o.user_id 
-    
+    $query = $pdo->prepare('SELECT o.order_id ,COUNT(i.product_id) AS product_id, o.first_name,o.last_name,o.status,MAX(p.price_of_product) AS price_of_product,o.created_at,SUM(i.quantity) AS quantity,o.user_id
     FROM products p 
     JOIN order_items i ON p.id = i.product_id
     JOIN orders o ON i.order_id = o.order_id 
-    WHERE p.added_by = :user_id GROUP BY (o.order_id)' ); 
+    WHERE p.added_by = :user_id GROUP BY (o.order_id) 
+    ORDER BY o.order_id DESC
+    LIMIT :orders_per_page OFFSET :offset' ); 
     $query->bindValue(':user_id',$user_id);
+    $query->bindValue(':orders_per_page',$orders_per_page,PDO::PARAM_INT);
+    $query->bindValue(':offset',$offset,PDO::PARAM_INT);
     $query->execute();
 
     $countQuery = $pdo->prepare('SELECT COUNT(*) AS total_rows ,
@@ -29,6 +38,18 @@ try{
     $proccessing=$numOfrows['proccessing'];
     $complete=$numOfrows['complete'];
     echo $complete;
+
+
+    // pagination query
+    $pagination_query = $pdo->prepare('SELECT COUNT(DISTINCT i.order_id) AS total_orders
+    FROM order_items i 
+    JOIN products p ON i.product_id = p.id
+    WHERE p.added_by = :user_id');
+    $pagination_query->bindValue(':user_id',$user_id);
+    $pagination_query->execute();
+    $orders = $pagination_query->fetch();
+
+    $no_of_pages = ceil($orders['total_orders']/5) ;
   }catch(PDOException $e){
       die('error' . $e->getMessage());
   }
@@ -170,8 +191,8 @@ try{
 
   <!-- Main Content -->
   <div class="main-content">
+    <?php echo $no_of_pages;?>
     <div class="container-fluid">
-        <?php echo $complete; ?>
       <!-- Stats Cards -->
       <div class="row g-4 mb-4">
         <div class="col-xl-3 col-md-6">
@@ -285,100 +306,47 @@ try{
                 }
                 
                 ?>  
-              <tr data-status="Pending">
-                  <td class="py-3 px-4 fw-medium">#001</td>
-                  <td class="py-3 px-4">
-                    <div class="d-flex align-items-center">
-                      <div class="bg-light rounded-circle p-2 me-2">👤</div>
-                      <span>John Doe</span>
-                    </div>
-                  </td>
-                  <td class="py-3 px-4"><span class="badge badge-pending rounded-pill">Pending</span></td>
-                  <td class="py-3 px-4 fw-semibold">1</td>
-                  <td class="py-3 px-4 fw-semibold">$120.00</td>
-                  <td class="py-3 px-4 text-muted">Oct 3, 2025</td>
-                  <td class="py-3 px-4 text-center">
-                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#orderDetailModal">View Details</button>
-                  </td>
-                </tr>
-                <tr data-status="Processing">
-                  <td class="py-3 px-4 fw-medium">#002</td>
-                  <td class="py-3 px-4">
-                    <div class="d-flex align-items-center">
-                      <div class="bg-light rounded-circle p-2 me-2">👤</div>
-                      <span>Jane Smith</span>
-                    </div>
-                  </td>
-                  <td class="py-3 px-4"><span class="badge badge-processing rounded-pill">Processing</span></td>
-                  <td class="py-3 px-4 fw-semibold">1</td>
-                  <td class="py-3 px-4 fw-semibold">$80.00</td>
-                  <td class="py-3 px-4 text-muted">Oct 2, 2025</td>
-                  <td class="py-3 px-4 text-center">
-                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#orderDetailModal">View Details</button>
-                  </td>
-                </tr>
-                <tr data-status="Completed">
-                  <td class="py-3 px-4 fw-medium">#003</td>
-                  <td class="py-3 px-4">
-                    <div class="d-flex align-items-center">
-                      <div class="bg-light rounded-circle p-2 me-2">👤</div>
-                      <span>Mike Johnson</span>
-                    </div>
-                  </td>
-                  <td class="py-3 px-4"><span class="badge badge-completed rounded-pill">Completed</span></td>
-                  <td class="py-3 px-4 fw-semibold">1</td>
-                  <td class="py-3 px-4 fw-semibold">$150.00</td>
-                  <td class="py-3 px-4 text-muted">Oct 1, 2025</td>
-                  <td class="py-3 px-4 text-center">
-                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#orderDetailModal">View Details</button>
-                  </td>
-                </tr>
-                <tr data-status="Cancelled">
-                  <td class="py-3 px-4 fw-medium">#004</td>
-                  <td class="py-3 px-4">
-                    <div class="d-flex align-items-center">
-                      <div class="bg-light rounded-circle p-2 me-2">👤</div>
-                      <span>Anna Lee</span>
-                    </div>
-                  </td>
-                  <td class="py-3 px-4"><span class="badge badge-cancelled rounded-pill">Cancelled</span></td>
-                  <td class="py-3 px-4 fw-semibold">1</td>
-                  <td class="py-3 px-4 fw-semibold">$60.00</td>
-                  <td class="py-3 px-4 text-muted">Sep 30, 2025</td>
-                  <td class="py-3 px-4 text-center">
-                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#orderDetailModal">View Details</button>
-                  </td>
-                </tr>
-                <tr data-status="Pending">
-                  <td class="py-3 px-4 fw-medium">#005</td>
-                  <td class="py-3 px-4">
-                    <div class="d-flex align-items-center">
-                      <div class="bg-light rounded-circle p-2 me-2">👤</div>
-                      <span>Robert Brown</span>
-                    </div>
-                  </td>
-                  <td class="py-3 px-4"><span class="badge badge-pending rounded-pill">Pending</span></td>
-                  <td class="py-3 px-4 fw-semibold">1</td>  
-                  <td class="py-3 px-4 fw-semibold">$95.50</td>
-                  <td class="py-3 px-4 text-muted">Oct 3, 2025</td>
-                  <td class="py-3 px-4 text-center">
-                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#orderDetailModal">View Details</button>
-                  </td>
-                </tr>
               </tbody>
             </table>
           </div>
         </div>
         <div class="card-footer bg-white border-top">
           <div class="d-flex justify-content-between align-items-center">
-            <small class="text-muted">Showing 5 of 120 orders</small>
+            <small class="text-muted">Showing 5 of <?php echo $orders['total_orders'] ; ?></small>
             <nav>
               <ul class="pagination pagination-sm mb-0">
-                <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                <?php
+                if($page > 1){
+                  echo '<li class="page-item "><a class="page-link" href="?page='.($page-1).'">Previous</a></li>';
+                }
+                
+                if($page>=3){
+                  echo '<li class="page-item"><a class="page-link" href="?page=1">1</a></li>';
+                  if($page>3){
+                    echo '<li class="page-item">...</li>';
+                  }
+                }
+                $end = min($no_of_pages,$page + 1);
+                $start = max(1,$page-1); 
+                for ($i=$start;$i<=$end;$i++){
+                  echo '<li class="page-item "><a class="page-link" href=?page='.$i.'>'.$i.'</a></li>';
+                }
+                if($page<=$no_of_pages-2){
+                  if($page<=$no_of_pages-3){
+                    echo '<li class="page-item">...</li>';
+                  }
+                  echo '<li class="page-item"><a class="page-link" href="?page='.$no_of_pages.'">'.$no_of_pages.'</a></li>';
+                  
+                }
+                if($page < $no_of_pages){
+                  echo '<li class="page-item "><a class="page-link" href="?page='.($page+1).'">Next</a></li>';
+                }
+                ?>
+                  <!-- <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                  <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item"><a class="page-link" href="#">Next</a></li> -->
               </ul>
             </nav>
           </div>
