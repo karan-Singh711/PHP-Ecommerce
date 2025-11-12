@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once '../dbConnection.php';
 require_once __DIR__ . '/../vendor/autoload.php';
  $dotenv = Dotenv\Dotenv::createImmutable(__DIR__.'/../');
@@ -50,7 +51,7 @@ if(isset($user_info)){
         $user_exist->execute();
         $user = $user_exist->fetch();
         if($user){
-            echo 'already';
+            $_SESSION['id'] = $user['id'];
         }else{
             $insert_google_user = $pdo->prepare('INSERT INTO users(name_of_user,user_email,google_id,role)
             VALUES(:name,:email,:google_id,:role)');
@@ -59,9 +60,8 @@ if(isset($user_info)){
             $insert_google_user->bindValue(':google_id',$google_id);
             $insert_google_user->bindValue(':role','user');
             $insert_google_user->execute();
+            $_SESSION['id'] =$pdo->lastInsertId();
         }
-        session_start();
-        $_SESSION['id'] = $user['id'] ?? $pdo->lastInsertId();
 
         header('Location:../index.php');
     }catch(PDOException $e){
