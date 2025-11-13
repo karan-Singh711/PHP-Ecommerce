@@ -43,10 +43,13 @@ if(isset($_POST['submit']) && isset($_POST['name']) && isset($_POST['email']) &&
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
-<body class="h-screen overflow-hidden">
-    <div class="flex flex-col md:flex-row h-full">
+<body class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center p-4 md:p-8">
+    
+    <!-- Main Elevated Card Container -->
+    <div class="w-full max-w-6xl bg-black rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row" style="box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 80px rgba(85, 88, 121, 0.3);">
+        
         <!-- Left Side - Image with Overlay Text (Hidden on mobile) -->
-       <div class="hidden md:block md:w-1/2 h-full relative bg-cover bg-center" style="background-image: url('public/images/background2.png');">
+        <div class="hidden md:block md:w-1/2 relative bg-cover bg-center" style="background-image: url('public/images/background2.png'); min-height: 600px;">
             <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-center px-10">
                 <h1 class="text-5xl lg:text-6xl font-extrabold text-white mb-5 drop-shadow-lg leading-tight">
                 Welcome
@@ -58,11 +61,10 @@ if(isset($_POST['submit']) && isset($_POST['name']) && isset($_POST['email']) &&
                 Sign in and continue exploring the collections you love, or discover new arrivals trending right now.
                 </p>
             </div>
-     </div>
-
+        </div>
 
         <!-- Right Side - Signup Form -->
-        <div class="w-full md:w-1/2 h-full bg-black relative overflow-hidden flex items-center justify-center p-4 md:p-8">
+        <div class="w-full md:w-1/2 bg-black relative overflow-hidden flex items-center justify-center p-6 md:p-10">
             <!-- Blurred Circle Top-Left -->
             <div class="absolute -top-20 -left-20 w-72 h-72 rounded-full blur-3xl opacity-50" style="background-color: #555879;"></div>
             
