@@ -562,4 +562,82 @@ if($_SERVER['REQUEST_METHOD']==='POST'
         }
         
       } 
+
+      if(isset($_POST['categoryName']) && isset($_POST['slugName']) && $_POST['action'] === 'insertCategory' ){
+         $name = ucfirst($_POST['categoryName']);
+         $slug = strtolower(preg_replace('/\s+/','+',$_POST['slugName']));
+         try{
+            $insertInCategory = $pdo->prepare('INSERT INTO category(category_name,category_slug,parent_id,status,created_at,update_at)
+            VALUES(:name,:slug,:parent_id,:status,:created,:updated)');
+            $insertInCategory->bindValue(':name',$name);
+            $insertInCategory->bindValue(':slug',$slug);
+            $insertInCategory->bindValue(':parent_id',NULL);
+            $insertInCategory->bindValue(':status','active');
+            $insertInCategory->bindValue(':created',date('Y-m-d H:i:s'));
+            $insertInCategory->bindValue(':updated',NULL);
+
+            $insertInCategory->execute();
+            echo json_encode(['success'=>true,'message'=>'added successfully']);
+         }
+         catch(PDOException $e){
+            echo json_encode(['success'=>false,'message'=>$e->getMessage()]);
+         }
+      }
+      if(isset($_POST['subCategoryName']) && isset($_POST['subCategorySlug']) && isset($_POST['parentId']) && $_POST['action'] === 'insertSubCategory' ){
+         $parent_id = intval($_POST['parentId']);
+         $name = ucfirst($_POST['subCategoryName']);
+         $slug = strtolower(preg_replace('/\s+/','+',$_POST['subCategorySlug']));
+         try{
+            $insertInCategory = $pdo->prepare('INSERT INTO category(category_name,category_slug,parent_id,status,created_at,update_at)
+            VALUES(:name,:slug,:parent_id,:status,:created,:updated)');
+            $insertInCategory->bindValue(':name',$name);
+            $insertInCategory->bindValue(':slug',$slug);
+            $insertInCategory->bindValue(':parent_id',$parent_id,PDO::PARAM_INT);
+            $insertInCategory->bindValue(':status','active');
+            $insertInCategory->bindValue(':created',date('Y-m-d H:i:s'));
+            $insertInCategory->bindValue(':updated',NULL);
+
+            $insertInCategory->execute();
+            echo json_encode(['success'=>true,'message'=>'added successfully']);
+         }
+         catch(PDOException $e){
+            echo json_encode(['success'=>false,'message'=>$e->getMessage()]);
+         }
+      }
+
+      if(isset($_POST['categoryId']) && $_POST['action'] === 'selectSubCategory'){
+         $parent_id =  intval($_POST['categoryId']);
+         try{
+            $select_subCategory = $pdo->prepare('SELECT * FROM category WHERE parent_id = :id');
+            $select_subCategory->bindValue(':id',$parent_id,PDO::PARAM_INT);
+            $select_subCategory->execute();
+            $subCategories = $select_subCategory->fetchAll();
+            echo json_encode(['success'=>true,'data'=>$subCategories]);
+         }
+         catch(PDOException $e){
+            echo json_encode(['success'=>false,'message'=>$e->getMessage()]);
+         }
+      }
+
+      if(isset($_POST['subSubName']) && isset($_POST['subSubSlug']) && isset($_POST['subSubParentId']) && $_POST['action'] === 'insertSubSubCategory' ){
+         $parent_id = intval($_POST['subSubParentId']);
+         $name = ucfirst($_POST['subSubName']);
+         $slug = strtolower(preg_replace('/\s+/','+',$_POST['subSubSlug']));
+         try{
+            $insertInCategory = $pdo->prepare('INSERT INTO category(category_name,category_slug,parent_id,status,created_at,update_at)
+            VALUES(:name,:slug,:parent_id,:status,:created,:updated)');
+            $insertInCategory->bindValue(':name',$name);
+            $insertInCategory->bindValue(':slug',$slug);
+            $insertInCategory->bindValue(':parent_id',$parent_id,PDO::PARAM_INT);
+            $insertInCategory->bindValue(':status','active');
+            $insertInCategory->bindValue(':created',date('Y-m-d H:i:s'));
+            $insertInCategory->bindValue(':updated',NULL);
+
+            $insertInCategory->execute();
+            echo json_encode(['success'=>true,'message'=>'added successfully']);
+         }
+         catch(PDOException $e){
+            echo json_encode(['success'=>false,'message'=>$e->getMessage()]);
+         }
+      }
 ?>
