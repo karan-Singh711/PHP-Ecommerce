@@ -38,7 +38,6 @@
     </style>
 </head>
 <body class="bg-white">
-
     <!-- Navigation Bar (Tailwind version) -->
     <nav class="fixed top-0 w-full bg-transparent z-50 py-6 px-8">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
