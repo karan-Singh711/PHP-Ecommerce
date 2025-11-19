@@ -640,4 +640,22 @@ if($_SERVER['REQUEST_METHOD']==='POST'
             echo json_encode(['success'=>false,'message'=>$e->getMessage()]);
          }
       }
+      if(isset($_POST['categories']) && $_POST['action'] === 'attributeCategory'){
+         $name =$_POST['categories'];
+         try{
+            $getCategories = $pdo->prepare('SELECT * FROM category WHERE category_name LIKE :name');
+            $getCategories->bindValue(':name',"%".$name."%");
+            $getCategories->execute();
+            $categories = $getCategories->fetchAll();
+            if(!empty($categories)){
+               echo json_encode(['success'=>true,'message'=>'selected the categories','data' => $categories]);
+            }else{
+               echo json_encode(['success'=>true,'message'=>'data is empty']);
+            }
+           
+         }
+         catch(PDOException $e){
+            echo json_encode(['success'=>false,'message'=>$e->getMessage()]);
+         }
+      }
 ?>
