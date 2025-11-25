@@ -5,19 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Attribute Manager</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
-        // tailwind.config = {
-        //     theme: {
-        //         extend: {
-        //             colors: {
-        //                 primary: '#98A1BC',
-        //                 secondary: '#555879',
-        //             }
-        //         }
-        //     }
-        // }
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#98A1BC',
+                        secondary: '#555879',
+                    }
+                }
+            }
+        }
     </script>
 </head>
 <body class="bg-gray-50">
@@ -109,13 +109,7 @@
                         
                         <!-- Dropdown Results - PHP will populate this -->
                         <div id="categoryDropdown" class="hidden absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                            <!-- PHP: Loop categories here and generate options -->
-                            
-                            <div class="p-3 hover:bg-blue-50 cursor-pointer border-b" data-category-id="1" onclick="selectCategory(this)">
-                                <div class="font-medium text-sm sm:text-base">Electronics</div>
-                                <div class="text-xs sm:text-sm text-gray-500">Main Category</div>
-                            </div>
-                           
+        
                         </div>
                     </div>
 
@@ -257,7 +251,7 @@
                 </div>
                 <div class="flex gap-3">
                     <button type="button" onclick="closeAddAttributeModal()" class="flex-1 px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
-                    <button type="submit" class="flex-1 px-4 py-2 text-sm sm:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700">Add Attribute</button>
+                    <button type="submit" class="flex-1 px-4 py-2 text-sm sm:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700" >Add Attribute</button>
                 </div>
             </form>
         </div>
@@ -317,6 +311,7 @@
                     </div> -->
 
     <script>
+        
         $(document).ready(function() {
             // Mobile Menu Toggle
             $('#mobileMenuBtn').on('click', function() {
@@ -346,13 +341,26 @@
                             success:function(response){
                                 categoryDropdown.removeClass('hidden')
                                 console.log(response)
-                                if(response.data.length !== 0){
-                                    optionHtml = `
-                                    <div class="p-3 hover:bg-blue-50 cursor-pointer border-b" data-category-id="1" onclick="selectCategory(this)">
-                                        <div class="font-medium text-sm sm:text-base">Electronics</div>
-                                        <div class="text-xs sm:text-sm text-gray-500">Main Category</div>
-                                    </div>
-                                    `  
+                                categoryDropdown.html('')
+                                if(response.data && response.data.length !== 0){
+                                    let data = response.data
+                                    $.each(data,function(index,item) {
+                                        let categoryType = ""
+                                        if(item.parent_id === null){
+                                            categoryType = 'Main Category'
+                                        }else{
+                                            categoryType = 'Sub Category'
+                                        }
+                                        optionHtml = `
+                                            <div class="p-3 hover:bg-blue-50 cursor-pointer border-b" data-category-id="${item.id}" onclick="selectCategory(this)">
+                                                <div class="font-medium text-sm sm:text-base">${item.category_name}</div>
+                                                <div class="text-xs sm:text-sm text-gray-500">${categoryType}</div>
+                                            </div>
+                                        `  
+                                        categoryDropdown.append(optionHtml)
+                                       
+                                    })
+                                    
                                 }
                             } ,
                             error: function(xhr,status,error){
@@ -362,13 +370,17 @@
                     }, 500);
                 }
             })
-            // categorySearch.on('focus', function() {
-            //     categoryDropdown.removeClass('hidden');
-            // });
 
-            // categorySearch.on('blur', function() {
-            //     setTimeout(() => categoryDropdown.addClass('hidden'), 200);
-            // });
+            
+
+
+            categorySearch.on('focus', function() {
+                categoryDropdown.removeClass('hidden');
+            });
+
+            categorySearch.on('blur', function() {
+                setTimeout(() => categoryDropdown.addClass('hidden'), 200);
+            });
 
             // categorySearch.on('input', function() {
             //     const searchTerm = $(this).val().toLowerCase();
@@ -386,8 +398,7 @@
             // Add Attribute Form Submit
             $('#addAttributeForm').on('submit', function(e) {
                 e.preventDefault();
-                // Your backend code here to process form data
-                // Form data available: attributeName, categoryId
+                console.log(categoryId)
             });
 
             // Add Value Form Submit
@@ -396,21 +407,22 @@
                 // Your backend code here to process form data
                 // Form data available: attributeValue, attributeId
             });
+                
         });
 
-        function selectCategory(element) {
-            const categoryId = $(element).data('category-id');
-            const categoryName = $(element).find('.font-medium').first().text();
-            
-            $('#categorySearch').val(categoryName);
-            $('#categoryName').text(categoryName);
-            $('#selectedCategoryId').val(categoryId);
-            $('#attributeCategoryId').val(categoryId);
-            $('#selectedCategory').removeClass('hidden');
-            $('#mainContent').removeClass('hidden');
-            $('#categoryDropdown').addClass('hidden');
-        }
-
+       
+            function selectCategory(element) {
+                const categoryId = $(element).data('category-id');
+                const categoryName = $(element).find('.font-medium').first().text();
+                console.log(categoryId)
+                $('#categorySearch').val(categoryName);
+                $('#categoryName').text(categoryName);
+                $('#selectedCategoryId').val(categoryId);
+                $('#attributeCategoryId').val(categoryId);
+                $('#selectedCategory').removeClass('hidden');
+                $('#mainContent').removeClass('hidden');
+                $('#categoryDropdown').addClass('hidden');
+            }
         function clearCategory() {
             $('#categorySearch').val('');
             $('#selectedCategory').addClass('hidden');
@@ -433,7 +445,7 @@
             const categoryId = $('#selectedCategoryId').val();
             $('#attributeCategoryId').val(categoryId);
             $('#addAttributeModal').removeClass('hidden');
-        }
+        } 
 
         function closeAddAttributeModal() {
             $('#addAttributeModal').addClass('hidden');
